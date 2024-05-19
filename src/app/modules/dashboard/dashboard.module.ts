@@ -13,6 +13,7 @@ import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 import { CookieService } from 'ngx-cookie-service';
 import { ChartModule } from 'primeng/chart';
+import { SharedModule } from 'src/app/shared/shared.module';
 
 @NgModule({
   declarations: [
@@ -23,6 +24,7 @@ import { ChartModule } from 'primeng/chart';
     FormsModule,
     ReactiveFormsModule,
     RouterModule.forChild(DASHBOARD_ROUTES),
+    SharedModule,
 
     // PrimeNG
     SidebarModule,
