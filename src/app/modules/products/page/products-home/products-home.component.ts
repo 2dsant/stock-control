@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { Subject, takeUntil } from 'rxjs';
+import { EventAction } from 'src/app/models/interfaces/product/event/EventAction';
 import { GetAllProductsResponse } from 'src/app/models/interfaces/product/response/GetAllProductsResponse';
 import { ProductService } from 'src/app/services/product/product.service';
 import { ProductsDataTransferService } from 'src/app/shared/services/products/service-data-transfer.service';
@@ -57,6 +58,12 @@ export class ProductsHomeComponent implements OnDestroy, OnInit {
           this.router.navigate(['/dashboard']);
         }
       })
+  }
+
+  handleProductAction(event: EventAction): void {
+    if(event){
+      console.log(event);
+    }
   }
 
   ngOnDestroy(): void {
