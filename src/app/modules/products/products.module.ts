@@ -20,6 +20,7 @@ import { PRODUCTS_ROUTES } from './products.routing';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { ProductsTableComponent } from './components/products-table/products-table.component';
 import { ProductFormComponent } from './components/product-form/product-form.component';
+import { InputTextModule } from 'primeng/inputtext';
 
 @NgModule({
   declarations: [
@@ -44,7 +45,8 @@ import { ProductFormComponent } from './components/product-form/product-form.com
     DynamicDialogModule,
     DropdownModule,
     ConfirmDialogModule,
-    TooltipModule
+    TooltipModule,
+    InputTextModule
   ],
   providers: [DialogService, ConfirmationService]
 })
