@@ -4,9 +4,11 @@ import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { DynamicDialogConfig } from 'primeng/dynamicdialog';
 import { Subject, takeUntil } from 'rxjs';
+import { ProductEvent } from 'src/app/models/enums/products/ProductEvent';
 import { GetCategoriesResponse } from 'src/app/models/interfaces/categories/response/getCategoriesResponse';
 import { EventAction } from 'src/app/models/interfaces/product/event/EventAction';
 import { CreateProductRequest } from 'src/app/models/interfaces/product/request/CreateProductRequest';
+import { EditProductRequest } from 'src/app/models/interfaces/product/request/EditProductRequest';
 import { GetAllProductsResponse } from 'src/app/models/interfaces/product/response/GetAllProductsResponse';
 import { CategoriesService } from 'src/app/services/categories/categories.service';
 import { ProductService } from 'src/app/services/product/product.service';
@@ -23,7 +25,7 @@ export class ProductFormComponent implements OnInit, OnDestroy{
   public selectedCategory: Array<{ name: string; code: string }> = [];
   public productAction!: {
     event: EventAction,
-    productsData: Array<GetAllProductsResponse>;
+    productDatas: Array<GetAllProductsResponse>;
   }
   public productSelectedData!: GetAllProductsResponse;
   public productsData!: Array<GetAllProductsResponse>;
@@ -43,6 +45,10 @@ export class ProductFormComponent implements OnInit, OnDestroy{
     amount: [0, Validators.required],
   });
 
+  public addProductAction = ProductEvent.ADD_PRODUCT_EVENT;
+  public editProductAction = ProductEvent.EDIT_PRODUCT_EVENT;
+  public saleProductAction = ProductEvent.SALE_PRODUCT_EVENT;
+
   constructor(
     private categoriesService: CategoriesService,
     private formBuilder: FormBuilder,
@@ -56,6 +62,12 @@ export class ProductFormComponent implements OnInit, OnDestroy{
   ngOnInit(): void {
     this.getAllCategories();
     this.productAction = this.ref.data;
+
+    if(this.productAction?.event.action === this.editProductAction && this.productAction?.productDatas) {
+      this.getProductSelectedData(this.productAction?.event?.id as string);
+    }
+
+    this.productAction?.event.action === this.saleProductAction && this.getProductsData()
   }
 
   getAllCategories(): void {
@@ -109,13 +121,34 @@ export class ProductFormComponent implements OnInit, OnDestroy{
   }
 
   handleSubmitEditProduct(): void {
-    // if(this.editProductForm.value && this.editProductForm.valid) {
-
-    // }
+    if(this.editProductForm.value && this.editProductForm.valid && this.productAction.event.id) {
+      const requestEditProduct = this.editProductForm.value as EditProductRequest;
+      requestEditProduct.product_id = this.productAction?.event.id
+      this.productService.editProduct(requestEditProduct)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Sucesso',
+            detail: 'Produto editado com sucesso!',
+            life: 2500
+          });
+        },
+        error: err => {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Erro',
+            detail: 'Erro ao editar produto!',
+            life: 2500
+          });
+        }
+      })
+    }
   }
 
   getProductSelectedData(productId: string): void {
-    const allProducts = this.productAction?.productsData;
+    const allProducts = this.productAction?.productDatas;
 
     if(allProducts.length) {
       const productFiltered = allProducts.filter(p => p.id == productId);
