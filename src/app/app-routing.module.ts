@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './modules/home/home.component';
 import { DashboardHomeComponent } from './modules/dashboard/page/dashboard-home/dashboard-home.component';
 import { AuthGuard } from './guards/auth-guard.service';
+import { CategoriesModule } from './modules/categories/categories.module';
 
 const routes: Routes = [
   {
@@ -16,14 +17,17 @@ const routes: Routes = [
   },
   {
     path: 'dashboard',
-    loadChildren: () => import('./modules/dashboard/dashboard.module')
-      .then((m) => m.DashboardModule),
+    loadChildren: () => import('./modules/dashboard/dashboard.module').then((m) => m.DashboardModule),
     canActivate: [AuthGuard]
   },
   {
     path: 'products',
-    loadChildren: () => import('./modules/products/products.module')
-      .then((m) => m.ProductsModule),
+    loadChildren: () => import('./modules/products/products.module').then((m) => m.ProductsModule),
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'categories',
+    loadChildren: () => import('./modules/categories/categories.module').then(m => m.CategoriesModule),
     canActivate: [AuthGuard]
   }
 ];

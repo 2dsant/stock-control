@@ -30,6 +30,8 @@ export class ProductFormComponent implements OnInit, OnDestroy{
   public productSelectedData!: GetAllProductsResponse;
   public productsData!: Array<GetAllProductsResponse>;
 
+  public renderDropdown = false;
+  
   public addProductForm = this.formBuilder.group({
     name: ['', Validators.required],
     price: ['', Validators.required],
@@ -43,6 +45,7 @@ export class ProductFormComponent implements OnInit, OnDestroy{
     price: ['', Validators.required],
     description: ['', Validators.required],
     amount: [0, Validators.required],
+    category_id: ['', Validators.required],
   });
 
   public addProductAction = ProductEvent.ADD_PRODUCT_EVENT;
@@ -60,14 +63,11 @@ export class ProductFormComponent implements OnInit, OnDestroy{
   ) {}
 
   ngOnInit(): void {
-    this.getAllCategories();
     this.productAction = this.ref.data;
 
-    if(this.productAction?.event.action === this.editProductAction && this.productAction?.productDatas) {
-      this.getProductSelectedData(this.productAction?.event?.id as string);
-    }
-
     this.productAction?.event.action === this.saleProductAction && this.getProductsData()
+    this.getAllCategories(); 
+    this.renderDropdown = true;
   }
 
   getAllCategories(): void {
@@ -78,6 +78,9 @@ export class ProductFormComponent implements OnInit, OnDestroy{
         next: (response) => {
           if (response.length > 0) {
             this.categoriesDatas = response;
+            if(this.productAction?.event.action === this.editProductAction && this.productAction?.productDatas) {
+              this.getProductSelectedData(this.productAction?.event?.id as string);
+            }
           }
         },
       });
@@ -160,7 +163,8 @@ export class ProductFormComponent implements OnInit, OnDestroy{
           name: this.productSelectedData.name,
           price: this.productSelectedData.price,
           amount: this.productSelectedData.amount,
-          description: this.productSelectedData.description
+          description: this.productSelectedData.description,
+          category_id: this.productSelectedData.category?.id
         });
       }
     }
